@@ -4,7 +4,8 @@ from datetime import datetime
 from logging.config import dictConfig
 import json
 import requests
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, Table, MetaData, text, select
+from sqlalchemy.orm import Session
 from .util.log_config import LogConfig
 
 dictConfig(LogConfig().dict())
@@ -13,7 +14,7 @@ dictConfig(LogConfig().dict())
 class DataExtraction(threading.Thread):
 
     def __init__(self, dialect, driver, user, password, host,
-                 port, db, query, timestamp, datasource_id, ingestion_url):
+                 port, db, table, columns, where, timestamp, datasource_id, ingestion_url):
 
         super(DataExtraction, self).__init__()
         self.dialect = dialect
@@ -23,7 +24,9 @@ class DataExtraction(threading.Thread):
         self.host = host
         self.port = port
         self.db = db
-        self.query = query
+        self.table = table
+        self.columns = columns
+        self.where = where
         self.timestamp = timestamp
         self.datasource_id = datasource_id
         self.ingestion_url = ingestion_url
@@ -36,14 +39,14 @@ class DataExtraction(threading.Thread):
         row_numbers = 0
         end_timestamp = datetime.utcnow().timestamp() * 1000
 
-        self.status_logger.info("Posting contacts")
+        self.status_logger.info("Posting rows")
 
         for row in results:
             try:
 
-                row_values = json.dumps(row)
+                row_values = json.dumps(dict(row))
 
-                datasource_payload = {"contact": row_values}
+                datasource_payload = {"row": row_values}
 
                 raw_content = ""
 
@@ -77,12 +80,25 @@ class DataExtraction(threading.Thread):
     def extract_recent(self):
         try:
             engine = create_engine(self.url_extract)
-            with engine.connect as conn:
-                results = conn.execute(self.query)
+            with Session(engine) as session:
+                metadata_obj = MetaData()
+                table = Table(self.table, metadata_obj, autoload_with=engine)
+
+                query = session.query()
+
+                if self.columns is None:
+                    query = query.add_columns(*table.c)
+                else:
+                    query = query.add_columns(*[table.c[e] for e in self.columns])
+
+                if self.where is not None:
+                    query = query.where(text(self.where))
+
+                results = session.execute(query)
                 self.manage_data(results)
 
         except requests.RequestException:
-            self.status_logger.error("No contact extracted. Extraction process aborted.")
+            self.status_logger.error("No row extracted. Extraction process aborted.")
             return
 
         self.status_logger.info("Extraction ended")

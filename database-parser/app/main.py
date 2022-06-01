@@ -2,6 +2,7 @@ import logging
 import os
 from fastapi import FastAPI
 from pydantic import BaseModel
+from typing import List, Optional
 from data.data_extraction import DataExtraction
 
 app = FastAPI()
@@ -25,7 +26,9 @@ class DatabaseRequest(BaseModel):
     host: str
     port: str
     db: str
-    query: str
+    table: str
+    columns: Optional[List[str]]
+    where: Optional[str]
     timestamp: int
     datasourceId: int
 
@@ -41,12 +44,14 @@ def get_data(request: DatabaseRequest):
     host = request["host"]
     port = request["port"]
     db = request["db"]
-    query = request["query"]
+    table = request["table"]
+    columns = request["columns"]
+    where = request["where"]
     timestamp = request["timestamp"]
     datasource_id = request["datasourceId"]
 
     data_extraction = DataExtraction(dialect, driver, user, password,
-                                     host, port, db, query,
+                                     host, port, db, table, columns, where,
                                      timestamp, datasource_id, ingestion_url)
 
     data_extraction.extract_recent()
