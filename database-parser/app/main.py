@@ -1,5 +1,6 @@
 import logging
 import os
+import threading
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Optional
@@ -54,6 +55,7 @@ def get_data(request: DatabaseRequest):
                                      host, port, db, table, columns, where,
                                      timestamp, datasource_id, ingestion_url)
 
-    data_extraction.extract_recent()
+    thread = threading.Thread(target=data_extraction.extract_recent)
+    thread.start()
 
-    return
+    return "Extraction Started"
