@@ -26,5 +26,5 @@ class LogConfig(BaseModel):
         },
     }
     loggers = {
-        "crm-parser": {"handlers": ["default"], "level": LOG_LEVEL},
+        "database-parser": {"handlers": ["default"], "level": LOG_LEVEL},
     }

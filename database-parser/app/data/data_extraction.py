@@ -6,6 +6,8 @@ import json
 import requests
 from sqlalchemy import create_engine, Table, MetaData, text, select
 from sqlalchemy.orm import Session
+from sqlalchemy.inspection import inspect
+from .util.utility import post_message, validate_model
 from .util.log_config import LogConfig
 
 dictConfig(LogConfig().dict())
@@ -33,9 +35,9 @@ class DataExtraction(threading.Thread):
 
         self.url_extract = self.dialect + "+" + self.driver + "://" + self.user + ":" + self.password + "@" + self.host + ":" + self.port + "/" + self.db
 
-        self.status_logger = logging.getLogger("crm-parser")
+        self.status_logger = logging.getLogger("database-parser")
 
-    def manage_data(self, results):
+    def manage_data(self, results, primary_keys):
         row_numbers = 0
         end_timestamp = datetime.utcnow().timestamp() * 1000
 
@@ -43,16 +45,16 @@ class DataExtraction(threading.Thread):
 
         for row in results:
             try:
-
                 row_values = json.dumps(dict(row))
 
-                datasource_payload = {"row": row_values}
+                model = validate_model(row_values)
+                datasource_payload = {"row": model}
 
-                raw_content = ""
+                raw_content = self.dialect + " " + self.user + " " + self.db + " " + self.table + " " + " ".join([str(row[primary_key]) for primary_key in primary_keys])
 
                 payload = {
                     "datasourceId": self.datasource_id,
-                    "contentId": "",
+                    "contentId": " ".join([str(row[primary_key]) for primary_key in primary_keys]),
                     "parsingDate": int(end_timestamp),
                     "rawContent": raw_content,
                     "datasourcePayload": datasource_payload,
@@ -95,7 +97,8 @@ class DataExtraction(threading.Thread):
                     query = query.where(text(self.where))
 
                 results = session.execute(query)
-                self.manage_data(results)
+                primary_keys = [key.name for key in inspect(table).primary_key]
+                self.manage_data(results, primary_keys)
 
         except requests.RequestException:
             self.status_logger.error("No row extracted. Extraction process aborted.")
