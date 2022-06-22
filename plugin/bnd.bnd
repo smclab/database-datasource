@@ -1,0 +1,7 @@
+Bundle-Name: [OpenK9 - Plugin] Database Datasource
+Bundle-SymbolicName: io.openk9.plugins.database
+
+
+
+OpenK9-Plugin: true
+OpenK9-Plugin-Web-Id: database-datasource
