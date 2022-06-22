@@ -16,3 +16,4 @@ COPY ./database-parser/app /app
 WORKDIR /app
 
 CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "5000"]
+
