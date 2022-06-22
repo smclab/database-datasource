@@ -45,10 +45,10 @@ class DataExtraction(threading.Thread):
 
         for row in results:
             try:
-                row_values = json.dumps(dict(row))
+                model = validate_model(dict(row))
+                row_values = json.dumps(model)
 
-                model = validate_model(row_values)
-                datasource_payload = {"row": model}
+                datasource_payload = {"row": row_values}
 
                 raw_content = self.dialect + " " + self.user + " " + self.db + " " + self.table + " " + " ".join([str(row[primary_key]) for primary_key in primary_keys])
 
