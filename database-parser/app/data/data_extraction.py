@@ -16,7 +16,7 @@ dictConfig(LogConfig().dict())
 class DataExtraction(threading.Thread):
 
     def __init__(self, dialect, driver, user, password, host,
-                 port, db, table, columns, where, timestamp, datasource_id, ingestion_url):
+                 port, db, table, columns, where, timestamp, datasource_id, schedule_id, ingestion_url):
 
         super(DataExtraction, self).__init__()
         self.dialect = dialect
@@ -31,6 +31,7 @@ class DataExtraction(threading.Thread):
         self.where = where
         self.timestamp = timestamp
         self.datasource_id = datasource_id
+        self.schedule_id = schedule_id
         self.ingestion_url = ingestion_url
 
         self.url_extract = self.dialect + "+" + self.driver + "://" + self.user + ":" + self.password + "@" + self.host + ":" + self.port + "/" + self.db
@@ -54,6 +55,7 @@ class DataExtraction(threading.Thread):
 
                 payload = {
                     "datasourceId": self.datasource_id,
+                    "scheduleId": self.schedule_id,
                     "contentId": " ".join([str(row[primary_key]) for primary_key in primary_keys]),
                     "parsingDate": int(end_timestamp),
                     "rawContent": raw_content,
