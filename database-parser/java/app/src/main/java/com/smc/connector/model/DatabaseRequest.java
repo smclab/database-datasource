@@ -18,6 +18,7 @@ public class DatabaseRequest extends Request {
         this._timestamp = (long) model.get("timestamp");
         this._datasourceId = (int) model.get("datasourceId");
         this._scheduleId = (String) model.get("scheduleId");
+        this._tenantId = (String) model.get("tenantId");
         this._table = (String) model.get("table");
         this._columns = (List<String>) (model.get("columns"));
         this._query = (String) model.get("query");
@@ -81,6 +82,7 @@ public class DatabaseRequest extends Request {
                 Map payload = new HashMap() {{
                     put("datasourceId", _datasourceId);
                     put("scheduleId", _scheduleId);
+                    put("tenantId", _tenantId);
                     put("contentId", primaryKeyStr);
                     put("parsingDate", end_timestamp);
                     put("rawContent", rawContent);
@@ -177,6 +179,7 @@ public class DatabaseRequest extends Request {
     private final long _timestamp;
     private final long _datasourceId;
     private final String _scheduleId;
+    private final String _tenantId;
     private final String _table;
     private final List<String> _columns;
     private final String _query;
