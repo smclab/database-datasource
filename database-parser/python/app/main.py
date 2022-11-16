@@ -33,6 +33,7 @@ class DatabaseRequest(BaseModel):
     timestamp: int
     datasourceId: int
     scheduleId: str
+    tenantId: str
 
 
 @app.post("/getData")
@@ -52,10 +53,11 @@ def get_data(request: DatabaseRequest):
     timestamp = request["timestamp"]
     datasource_id = request["datasourceId"]
     schedule_id = request['scheduleId']
+    tenant_id = request['tenantId']
 
     data_extraction = DataExtraction(dialect, driver, user, password,
                                      host, port, db, table, columns, where,
-                                     timestamp, datasource_id, schedule_id, ingestion_url)
+                                     timestamp, datasource_id, schedule_id, tenant_id, ingestion_url)
 
     thread = threading.Thread(target=data_extraction.extract_recent)
     thread.start()
