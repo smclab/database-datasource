@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Controller
 public class DatabaseController {
-    @PostMapping(path = "/getDatabaseData", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/getData", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String getData(@RequestBody Map model) {
         AsyncTask asyncTask = new AsyncTask(new DatabaseRequest(model));
