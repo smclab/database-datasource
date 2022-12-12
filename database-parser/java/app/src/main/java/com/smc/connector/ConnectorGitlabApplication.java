@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DemoConnectorGitlabApplication {
+public class ConnectorGitlabApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DemoConnectorGitlabApplication.class, args);
+		SpringApplication.run(ConnectorGitlabApplication.class, args);
 	}
 
 }
