@@ -1,10 +1,10 @@
 import threading
 import logging
-from datetime import datetime
+import datetime
 from logging.config import dictConfig
 import json
 import requests
-from sqlalchemy import create_engine, Table, MetaData, text, select
+from sqlalchemy import create_engine, Table, MetaData, text
 from sqlalchemy.orm import Session
 from sqlalchemy.inspection import inspect
 from .util.utility import post_message, validate_model
@@ -41,7 +41,7 @@ class DataExtraction(threading.Thread):
 
     def manage_data(self, results, primary_keys):
         row_numbers = 0
-        end_timestamp = datetime.utcnow().timestamp() * 1000
+        end_timestamp = datetime.datetime.now(datetime.UTC).timestamp() * 1000
 
         self.status_logger.info("Posting rows")
 
@@ -101,7 +101,7 @@ class DataExtraction(threading.Thread):
                     query = query.where(text(self.where))
 
                 results = session.execute(query)
-                primary_keys = [key.name for key in inspect(table).primary_key]
+                primary_keys = [key.name for key in inspect(table).primary_key()]
                 self.manage_data(results, primary_keys)
 
         except requests.RequestException:
