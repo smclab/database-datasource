@@ -12,10 +12,6 @@ ingestion_url = os.environ.get("INGESTION_URL")
 if ingestion_url is None:
     ingestion_url = "http://ingestion:8080/v1/ingestion/"
 
-delete_url = os.environ.get("DELETE_URL")
-if delete_url is None:
-    delete_url = "http://index-writer:8080/v1/delete-data-documents"
-
 logger = logging.getLogger("uvicorn.access")
 
 

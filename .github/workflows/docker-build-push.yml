@@ -49,6 +49,6 @@ jobs:
               id: docker_build_parser
               uses: docker/build-push-action@v2
               with:
-                file: email-parser/Dockerfile
+                file: database-parser/python/Dockerfile
                 push: true
                 tags: smclab/openk9-database-parser:${{ steps.prep.outputs.version }}

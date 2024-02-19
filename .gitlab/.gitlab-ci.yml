@@ -16,7 +16,7 @@ Build Tagged Parser Docker Images:
   before_script:
     - docker login -u $CI_REGISTRY_USERNAME -p $CI_REGISTRY_PASSWORD $CI_REGISTRY_NAME
   script:
-    - docker build -t database-parser:${CI_COMMIT_REF_NAME} -f database-parser/Dockerfile .
+    - docker build -t database-parser:${CI_COMMIT_REF_NAME} -f database-parser/python/Dockerfile .
     - docker tag database-parser:${CI_COMMIT_REF_NAME} $CI_REGISTRY_NAME/openk9/database-parser:${CI_COMMIT_REF_NAME}
     - docker push $CI_REGISTRY_NAME/openk9/database-parser:${CI_COMMIT_REF_NAME}
 
@@ -37,6 +37,6 @@ Build Latest Parser Docker Images:
   before_script:
     - docker login -u $CI_REGISTRY_USERNAME -p $CI_REGISTRY_PASSWORD $CI_REGISTRY_NAME
   script:
-    - docker build -t database-parser:latest -f database-parser/Dockerfile .
+    - docker build -t database-parser:latest -f database-parser/python/Dockerfile .
     - docker tag database-parser:latest $CI_REGISTRY_NAME/openk9/database-parser:latest
     - docker push $CI_REGISTRY_NAME/openk9/database-parser:latest
