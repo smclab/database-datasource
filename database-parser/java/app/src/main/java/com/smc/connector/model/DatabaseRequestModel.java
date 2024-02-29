@@ -5,8 +5,8 @@ import com.smc.connector.util.Util;
 import java.sql.*;
 import java.util.*;
 
-public class DatabaseRequest extends Request {
-    public DatabaseRequest(Map model) {
+public class DatabaseRequestModel extends Request {
+    public DatabaseRequestModel(Map model) {
         super(model);
         this._jdbcUrl = (String) model.get("url");
         this._database = (String) model.get("database");
