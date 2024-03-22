@@ -1,10 +1,9 @@
 import logging
 import os
 import threading
-import json
 import requests
-from starlette import status
-from fastapi import FastAPI
+import json
+from fastapi import FastAPI, Request, status
 from pydantic import BaseModel
 from typing import List, Optional
 from data.data_extraction import DataExtraction
@@ -115,3 +114,18 @@ def get_sample():
 
     return data
 
+
+@app.get("/form",
+        tags=["sitemap-form"],
+        summary="Get form structure of Sitemap request",
+        response_description="Return json form structure", )
+def get_sitemap_form():
+    f = open('data/sitemap-form.json')
+
+    # returns JSON object as
+    # a dictionary
+    data = json.load(f)
+
+    f.close()
+
+    return data
