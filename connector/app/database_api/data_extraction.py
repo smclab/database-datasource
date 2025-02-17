@@ -15,13 +15,13 @@ dictConfig(LogConfig().dict())
 
 class DataExtraction(threading.Thread):
 
-    def __init__(self, dialect, driver, user, password, host,
+    def __init__(self, dialect, driver, username, password, host,
                  port, db, table, columns, where, timestamp, datasource_id, schedule_id, tenant_id, ingestion_url):
 
         super(DataExtraction, self).__init__()
         self.dialect = dialect
         self.driver = driver
-        self.user = user
+        self.username = username
         self.password = password
         self.host = host
         self.port = port
@@ -35,7 +35,7 @@ class DataExtraction(threading.Thread):
         self.tenant_id = tenant_id
         self.ingestion_url = ingestion_url
 
-        self.url_extract = self.dialect + "+" + self.driver + "://" + self.user + ":" + self.password + "@" + self.host + ":" + self.port + "/" + self.db
+        self.url_extract = self.dialect + "+" + self.driver + "://" + self.username + ":" + self.password + "@" + self.host + ":" + self.port + "/" + self.db
 
         self.status_logger = logging.getLogger("database-parser")
 
@@ -52,7 +52,7 @@ class DataExtraction(threading.Thread):
 
                 datasource_payload = {"row": row_values}
 
-                raw_content = self.dialect + " " + self.user + " " + self.db + " " + self.table + " " + " ".join([str(row[primary_key]) for primary_key in primary_keys])
+                raw_content = self.dialect + " " + self.username + " " + self.db + " " + self.table + " " + " ".join([str(row[primary_key]) for primary_key in primary_keys])
 
                 payload = {
                     "datasourceId": self.datasource_id,
@@ -92,12 +92,12 @@ class DataExtraction(threading.Thread):
 
                 query = session.query()
 
-                if self.columns is None:
-                    query = query.add_columns(*table.c)
-                else:
+                if self.columns:
                     query = query.add_columns(*[table.c[e] for e in self.columns])
+                else:
+                    query = query.add_columns(*table.c)
 
-                if self.where is not None:
+                if self.where:
                     query = query.where(text(self.where))
 
                 results = session.execute(query)
