@@ -1,0 +1,7 @@
+version: "3.9"
+
+services:
+  database-parser:
+    image: database-parser:latest
+    ports:
+      - "8080:8080"

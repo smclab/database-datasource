@@ -6,7 +6,7 @@ import json
 from fastapi import FastAPI, Request, status
 from pydantic import BaseModel
 from typing import List, Optional
-from data.data_extraction import DataExtraction
+from database_api.data_extraction import DataExtraction
 
 app = FastAPI()
 
@@ -20,14 +20,14 @@ logger = logging.getLogger("uvicorn.access")
 class DatabaseRequest(BaseModel):
     dialect: str
     driver: str
-    user: str
+    username: str
     password: str
     host: str
     port: str
     db: str
     table: str
-    columns: Optional[List[str]]
-    where: Optional[str]
+    columns: Optional[List[str]] = None
+    where: Optional[str] = None
     timestamp: int
     datasourceId: int
     scheduleId: str
@@ -40,7 +40,7 @@ def get_data(request: DatabaseRequest):
 
     dialect = request["dialect"]
     driver = request["driver"]
-    user = request["user"]
+    username = request["username"]
     password = request["password"]
     host = request["host"]
     port = request["port"]
@@ -50,10 +50,10 @@ def get_data(request: DatabaseRequest):
     where = request["where"]
     timestamp = request["timestamp"]
     datasource_id = request["datasourceId"]
-    schedule_id = request['scheduleId']
-    tenant_id = request['tenantId']
+    schedule_id = request["scheduleId"]
+    tenant_id = request["tenantId"]
 
-    data_extraction = DataExtraction(dialect, driver, user, password,
+    data_extraction = DataExtraction(dialect, driver, username, password,
                                      host, port, db, table, columns, where,
                                      timestamp, datasource_id, schedule_id, tenant_id, ingestion_url)
 
@@ -120,7 +120,7 @@ def get_sample():
         summary="Get form structure of Sitemap request",
         response_description="Return json form structure", )
 def get_sitemap_form():
-    f = open('data/sitemap-form.json')
+    f = open('data/form.json')
 
     # returns JSON object as
     # a dictionary
