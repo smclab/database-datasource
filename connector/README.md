@@ -106,26 +106,14 @@ Command parameters:
 - **-p**: Exposed port to make api calls
 - **-name**: Set docker container name
 
-## Kubernetes
+## Kubernetes/Openshift
 
-#### TO-DO: Add guide
+To run Database Connector in Kubernetes/Openshift Helm Chart is available under [chart folder](../chart).
 
 # Docs and resources
 
-#### TO-DO: Add docs
+To read more go on [official site connector section](https://staging-site.openk9.io/plugins/)
 
 # Migration Guides
 
 #### TO-DO: Add wiki links
-
-# Contributing
-
-#### TO-DO: Add Contributing
-
-# Authors and acknowledgment
-
-#### TO-DO: Add Authors and acknowledgment
-
-# License
-
-#### TO-DO: Add License
