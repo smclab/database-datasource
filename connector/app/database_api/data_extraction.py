@@ -89,10 +89,13 @@ class DataExtraction(threading.Thread):
             with Session(engine) as session:
                 metadata_obj = MetaData()
                 table = Table(self.table, metadata_obj, autoload_with=engine)
+                primary_keys = [key.name for key in inspect(table).primary_key]
 
                 query = session.query()
 
                 if self.columns:
+                    for primary_key in primary_keys:
+                        self.columns.append(primary_key)
                     query = query.add_columns(*[table.c[e] for e in self.columns])
                 else:
                     query = query.add_columns(*table.c)
@@ -101,8 +104,8 @@ class DataExtraction(threading.Thread):
                     query = query.where(text(self.where))
 
                 results = session.execute(query)
-                primary_keys = [key.name for key in inspect(table).primary_key()]
-                self.manage_data(results, primary_keys)
+                results_as_dict = results.mappings().all()
+                self.manage_data(results_as_dict, primary_keys)
 
         except requests.RequestException:
             self.status_logger.error("No row extracted. Extraction process aborted.")
