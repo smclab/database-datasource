@@ -94,8 +94,7 @@ class DataExtraction(threading.Thread):
                 query = session.query()
 
                 if self.columns:
-                    for primary_key in primary_keys:
-                        self.columns.append(primary_key)
+                    self.columns.extend(primary_keys)
                     query = query.add_columns(*[table.c[e] for e in self.columns])
                 else:
                     query = query.add_columns(*table.c)
